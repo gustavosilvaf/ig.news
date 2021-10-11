@@ -16,7 +16,6 @@ interface PostProps {
 }
 
 export default function Posts({posts}: PostProps) {
-    console.log(posts)
     return (
         <>
             <head>
@@ -61,8 +60,6 @@ export const getStaticProps: GetStaticProps = async () => {
             })
         }
     })
-
-    console.log(posts)
 
     return {
         props: {
