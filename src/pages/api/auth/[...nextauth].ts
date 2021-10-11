@@ -22,24 +22,25 @@ export default NextAuth({
                             q.Exists(
                                 q.Match(
                                     q.Index('user_by_email'),
-                                    q.Casefold(user.email)
+                                    q.Casefold(email)
                                 )
                             )
                         ),
                         q.Create(
                             q.Collection('users'),
-                            { data: email }
+                            { data: { email } }
                         ),
                         q.Get(
                             q.Match(
                                 q.Index('user_by_email'),
-                                q.Casefold(user.email)
+                                q.Casefold(email)
                             )
                         )
                     ),
                 )
                 return true
-            } catch {
+            } catch (err){
+                console.log(err.message)
                 return false
             }
         }
