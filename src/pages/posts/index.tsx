@@ -2,8 +2,21 @@ import styles from './styles.module.scss';
 import {GetStaticProps} from "next";
 import {getPrismicClient} from "../../services/prismic";
 import Prismic from "@prismicio/client";
+import {RichText} from "prismic-dom";
 
-export default function Posts() {
+type Post = {
+    slug: string;
+    title: string;
+    excerpt: string;
+    updatedAt: string;
+}
+
+interface PostProps {
+    posts: Post[]
+}
+
+export default function Posts({posts}: PostProps) {
+    console.log(posts)
     return (
         <>
             <head>
@@ -11,12 +24,13 @@ export default function Posts() {
             </head>
             <main className={styles.container}>
                 <div className={styles.posts}>
-                    <a href="">
-                        <time>12 de março de 2021</time>
-                        <strong>Como renomear vários arquivos de uma vez usando o terminal</strong>
-                        <p>Suponha que seu projeto tenha uma base de código com 150 arquivos JavaScript e você precisar
-                            migrar para TypeScript alterando as extensões dos arquivos. 🤔</p>
-                    </a>
+                    {posts.map(post => (
+                        <a href="#" key={post.slug}>
+                            <time>{post.updatedAt}</time>
+                            <strong>{post.title}</strong>
+                            <p>{post.excerpt}</p>
+                        </a>
+                    ))}
                 </div>
 
             </main>
@@ -35,9 +49,24 @@ export const getStaticProps: GetStaticProps = async () => {
         }
     )
 
-    console.log(JSON.stringify(response, null, 2))
+    const posts = response.results.map(post => {
+        return {
+            slug: post.uid,
+            title: RichText.asText(post.data.title),
+            excerpt: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
+            updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            })
+        }
+    })
+
+    console.log(posts)
 
     return {
-        props: {}
+        props: {
+            posts
+        }
     }
 }
