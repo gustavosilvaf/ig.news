@@ -34,7 +34,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params}) => 
     const session = await getSession({req})
     const {slug} = params;
 
-    console.log(session)
     if(!session?.activeSubscription){
         return {
             redirect: {
@@ -48,13 +47,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params}) => 
 
     const response = await prismic.getByUID('post', String(slug), {})
 
-    const { data: { title, content }, last_publication_date } = response;
-
     const post = {
         slug,
-        title: RichText.asText(title),
-        content: RichText.asHtml(content),
-        updatedAt: new Date(last_publication_date).toLocaleDateString('pt-BR', {
+        title: RichText.asText(response.data.title),
+        content: RichText.asHtml(response.data.content),
+        updatedAt: new Date(response.last_publication_date).toLocaleDateString('pt-BR', {
             day: '2-digit',
             month: 'long',
             year: 'numeric'
