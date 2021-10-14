@@ -8,7 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if(req.method === 'POST') {
         const session = await getSession({ req })
 
-        const user = await fauna.query(
+        const user: {ref: {id: string}, data: { stripe_customer_id: string}} = await fauna.query(
             q.Get(
                 q.Match(
                     q.Index('user_by_email'),
