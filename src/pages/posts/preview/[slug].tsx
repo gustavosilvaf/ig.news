@@ -4,7 +4,7 @@ import Link from 'next/link'
 import styles from '../post.module.scss';
 import {GetStaticProps} from "next";
 import {useSession} from "next-auth/client";
-import {useEffect} from "react";
+import {useCallback, useEffect} from "react";
 import {useRouter} from "next/router";
 
 interface PreviewPostProps {
@@ -16,6 +16,8 @@ interface PreviewPostProps {
     }
 }
 
+
+
 export default function PreviewPost({post}: PreviewPostProps) {
     const [session] = useSession();
     const router = useRouter();
@@ -24,7 +26,7 @@ export default function PreviewPost({post}: PreviewPostProps) {
         if(!session){
             router.push(`/posts/${post.slug}`)
         }
-    }, [post.slug, router, session]);
+    }, [session]);
 
     return (
         <>
